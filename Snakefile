@@ -1,5 +1,20 @@
-# rule all:
-    # input: 'targetdist/targetdist_hg19.csv'
+import glob
+
+rule all:
+    message: 'Help Text Here'
+
+def get_input_bed():
+    return(glob.glob('input/*.bed'))
+
+def make_targetdist_input():
+    fns = get_input_bed()
+    chdir = list(map(lambda fn: fn.replace('input/','targetdist/'), fns))
+    chsuff = list(map(lambda fn: re.sub(r'.bed$', '.csv', fn), chdir))
+    return(chsuff)
+
+rule targetdist_all:
+    input:
+        make_targetdist_input()
 
 rule targetdist:
     input:
