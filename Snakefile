@@ -27,6 +27,23 @@ def make_targetdist_input():
     chsuff = list(map(lambda fn: re.sub(r'.bed$', '.csv', fn), chdir))
     return(chsuff)
 
+rule genome_impl:
+    output:
+        limits = '{genome}.limits'
+    conda:
+        'envs/targetdist.yaml'
+    shell:
+        'mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -e '
+        '"select chrom, size from hg19.chromInfo"  > {output.limits}'
+
+rule genome_nohead_impl:
+    input:
+        limits = '{genome}.limits'
+    output:
+        limits_nohead = '{genome}.limits_nohead'
+    shell:
+        'grep -v "^chrom" {input.limits} > {output.limits_nohead}'
+
 rule peakachu:
     input:
         make_peakachu_input()
