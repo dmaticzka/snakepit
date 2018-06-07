@@ -1,10 +1,25 @@
 import glob
+import os
 
 rule all:
     message: 'Help Text Here'
 
+def get_input_all():
+    return(glob.glob('input/*'))
+
+def get_input_dirs():
+    return(filter(os.path.isdir, glob.glob('input/*')))
+
 def get_input_bed():
     return(glob.glob('input/*.bed'))
+
+def make_peakachu_input():
+    # this expects directories under input/ that contain bed files
+    # in directories named signal and control
+    fns = get_input_dirs()
+    chdir = list(map(lambda fn: fn.replace('input/','peakachu/'), fns))
+    chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
+    return(chsuff)
 
 def make_targetdist_input():
     fns = get_input_bed()
@@ -12,11 +27,15 @@ def make_targetdist_input():
     chsuff = list(map(lambda fn: re.sub(r'.bed$', '.csv', fn), chdir))
     return(chsuff)
 
-rule targetdist_all:
+rule peakachu:
+    input:
+        make_peakachu_input()
+
+rule targetdist:
     input:
         make_targetdist_input()
 
-rule targetdist:
+rule targetdist_impl:
     input:
         bed = 'input/{id}_{genome}.bed'
     params:
