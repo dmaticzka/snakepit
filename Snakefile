@@ -31,6 +31,14 @@ rule peakachu:
     input:
         make_peakachu_input()
 
+rule peakachu_impl:
+    input:
+        dir = 'input/{id}_{genome}'
+    output:
+        peaks = 'peakachu/{id}_{genome}_peakachu.bed'
+    shell:
+        'echo {output.peaks}'
+
 rule targetdist:
     input:
         make_targetdist_input()
