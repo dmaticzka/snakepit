@@ -6,3 +6,4 @@ dependencies:
   - peakachu=0.1.0
   # to help with solving the environment:
   - r-base=3.4.1
+  - bedops

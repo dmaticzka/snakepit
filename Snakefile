@@ -4,6 +4,7 @@ include: 'rules/get_input_globs.smk'
 include: 'rules/helpers.smk'
 include: 'rules/converters.smk'
 include: 'rules/targetdist.smk'
+include: 'rules/peakachu.smk'
 
 rule all:
     message: 'Help Text Here'
@@ -24,28 +25,40 @@ def make_peakachu_bam_conversion(wildcards):
     bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
     return(bam + bai)
 
+def make_peakachu_size_factors(wildcards):
+    id = wildcards.id
+    signal = "1 " * len(glob.glob('input/{}/signal/*.bam'.format(id)))
+    control = "0 " * len(glob.glob('input/{}/control/*.bam'.format(id)))
+    return(signal + control)
+
 rule peakachu:
     input:
         make_peakachu_input()
 
 rule peakachu_impl:
     input:
-        # make_peakachu_bam_conversion,
-        make_peakachu_bam_conversion,
-        'input/{id}'
+        bam = make_peakachu_bam_conversion,
+        dir = 'input/{id}'
     output:
-        'output/peakachu/{id}_peakachu.bed'
+        bed = 'output/peakachu/{id}_peakachu.bed'
     log:
         'log/peakachu/{id}_peakachu.log'
     params:
-        genome = config['genome']
+        genome = config['genome'],
+        size_factors = make_peakachu_size_factors
+
+    shadow: "shallow"
+    threads: 1
     conda:
         'envs/peakachu.yaml'
-    script:
-        'scripts/peakachu.py'
-
-### example bed to bam peakachu
-
-# source /home/maticzkd/opt/miniconda3/bin/activate peakachu_0.1.0
-# SLOP=10; GENOME=hg19;
-# parallel --eta -j 12 "bedtools slop -i {} -b 10 -g ~/genomes/$GENOME.genome | bedtools bedtobam -i - -g ~/genomes/$GENOME.genome | samtools sort > {= s/.bed.gz// =}_slop$SLOP.bam; samtools index {= s/.bed.gz// =}_slop$SLOP.bam" ::: *.bed.gz
+    shell:
+        'peakachu adaptive '
+        '--exp_libs {input.dir}/signal/*.bam '
+        '--ctr_libs {input.dir}/control/*.bam '
+        '--pairwise_replicates '
+        '--max_proc {threads} '
+        '-m 0 -n manual --size_factors {params.size_factors} '
+        '--output_folder {input.dir} 2>&1 > {log}; '
+        'cat {input.dir}/peak_annotations/*.gff | '
+        'bedtools sort -i - | '
+        'gff2bed > {output.bed}'
