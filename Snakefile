@@ -1,6 +1,8 @@
 import glob
 import os
 
+configfile: 'config.yaml'
+
 rule all:
     message: 'Help Text Here'
 
@@ -23,7 +25,7 @@ def make_peakachu_input():
 
 def make_targetdist_input():
     fns = get_input_bed()
-    chdir = list(map(lambda fn: fn.replace('input/','targetdist/'), fns))
+    chdir = list(map(lambda fn: fn.replace('input/','output/targetdist/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'.bed$', '.csv', fn), chdir))
     return(chsuff)
 
@@ -50,25 +52,35 @@ rule peakachu:
 
 rule peakachu_impl:
     input:
-        dir = 'input/{id}_{genome}'
+        'input/{id}_{genome}'
     output:
-        peaks = 'peakachu/{id}_{genome}_peakachu.bed'
+        'peakachu/{id}_{genome}_peakachu.bed'
+    log:
+        'peakachu/{id}_{genome}_peakachu.log'
     shell:
-        'echo {output.peaks}'
+        'echo {input} {output}'
 
 rule targetdist:
     input:
         make_targetdist_input()
 
 rule targetdist_impl:
-    input:
-        bed = 'input/{id}_{genome}.bed'
     params:
-        genome = '{genome}',
-        outprefix = 'targetdist/{id}_{genome}'
+        genome = config['genome'],
+        outdir = 'output/targetdist/'
+    input:
+        bed = 'input/{id}.bed'
     output:
-        stats = 'targetdist/{id}_{genome}.csv'
+        stats = 'output/targetdist/{id}.csv'
+    log:
+        '{params.outdir}/{id}.log'
     conda:
         'envs/targetdist.yaml'
     shell:
-        '~/co/targetdist/targetdist_{params.genome}.sh {input.bed} {params.outprefix}'
+        '~/co/targetdist/targetdist_{params.genome}.sh {input.bed} {params.outdir}/{id}'
+
+### example bed to bam peakachu
+
+# source /home/maticzkd/opt/miniconda3/bin/activate peakachu_0.1.0
+# SLOP=10; GENOME=hg19;
+# parallel --eta -j 12 "bedtools slop -i {} -b 10 -g ~/genomes/$GENOME.genome | bedtools bedtobam -i - -g ~/genomes/$GENOME.genome | samtools sort > {= s/.bed.gz// =}_slop$SLOP.bam; samtools index {= s/.bed.gz// =}_slop$SLOP.bam" ::: *.bed.gz

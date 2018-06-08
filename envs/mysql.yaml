@@ -3,6 +3,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - bedtools=2.26.0
-  - r-ggplot2
-  - r-gridextra
+  - mysql
