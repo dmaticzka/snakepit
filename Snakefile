@@ -65,19 +65,19 @@ rule targetdist:
         make_targetdist_input()
 
 rule targetdist_impl:
+    input:
+        'input/{id}.bed'
+    output:
+        'output/targetdist/{id}.csv'
+    log:
+        'log/targetdist/{id}.log'
     params:
         genome = config['genome'],
-        outdir = 'output/targetdist/'
-    input:
-        bed = 'input/{id}.bed'
-    output:
-        stats = 'output/targetdist/{id}.csv'
-    log:
-        '{params.outdir}/{id}.log'
+        outprefix = 'output/targetdist/{id}'
     conda:
         'envs/targetdist.yaml'
     shell:
-        '~/co/targetdist/targetdist_{params.genome}.sh {input.bed} {params.outdir}/{id}'
+        '~/co/targetdist/targetdist_{params.genome}.sh {input} {params.outprefix} 2> {log}'
 
 ### example bed to bam peakachu
 
