@@ -47,6 +47,16 @@ rule peakachu_impl:
     script:
         'scripts/peakachu.py'
 
+rule bed_to_bam:
+    input:
+        bed = '{id}.bed',
+        limits = lambda wildcards: "{}.limits".format(config["genome"])
+    output:
+        '{id}.bam'
+    params:
+        genome = config['genome']
+    shell:
+        'bedtools bedtobam -i {input.bed} -g {input.limits}'
 ### example bed to bam peakachu
 
 # source /home/maticzkd/opt/miniconda3/bin/activate peakachu_0.1.0
