@@ -1,19 +1,10 @@
-import glob
-import os
-
 configfile: 'config.yaml'
+
+include:
+    'rules/get_input_globs.smk'
 
 rule all:
     message: 'Help Text Here'
-
-def get_input_all():
-    return(glob.glob('input/*'))
-
-def get_input_dirs():
-    return(filter(os.path.isdir, glob.glob('input/*')))
-
-def get_input_bed():
-    return(glob.glob('input/*.bed'))
 
 def make_peakachu_input():
     # this expects directories under input/ that contain bed files
