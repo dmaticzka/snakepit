@@ -2,6 +2,7 @@ configfile: 'config.yaml'
 
 include: 'rules/get_input_globs.smk'
 include: 'rules/helpers.smk'
+include: 'rules/converters.smk'
 include: 'rules/targetdist.smk'
 
 rule all:
@@ -20,16 +21,12 @@ def make_peakachu_bam_conversion(wildcards):
     control = get_input_bed("input/{}/control".format(wildcards.id))
     bed = signal + control
     bam = list(map(lambda fn: re.sub(r'.bed$', '.bam', fn), bed))
-    bai = list(map(lambda fn: re.sub(r'.bed$', '.bai', fn), bed))
+    bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
     return(bam + bai)
 
 rule peakachu:
     input:
         make_peakachu_input()
-
-rule peakachu_convert_to_bam:
-    shell:
-        'echo converting bed to bam'
 
 rule peakachu_impl:
     input:
@@ -47,16 +44,6 @@ rule peakachu_impl:
     script:
         'scripts/peakachu.py'
 
-rule bed_to_bam:
-    input:
-        bed = '{id}.bed',
-        limits = lambda wildcards: "{}.limits".format(config["genome"])
-    output:
-        '{id}.bam'
-    params:
-        genome = config['genome']
-    shell:
-        'bedtools bedtobam -i {input.bed} -g {input.limits}'
 ### example bed to bam peakachu
 
 # source /home/maticzkd/opt/miniconda3/bin/activate peakachu_0.1.0
