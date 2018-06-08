@@ -15,12 +15,26 @@ def make_peakachu_input():
     chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
     return(chsuff)
 
+def make_peakachu_bam_conversion(wildcards):
+    signal = get_input_bed("input/{}/signal".format(wildcards.id))
+    control = get_input_bed("input/{}/control".format(wildcards.id))
+    bed = signal + control
+    bam = list(map(lambda fn: re.sub(r'.bed$', '.bam', fn), bed))
+    bai = list(map(lambda fn: re.sub(r'.bed$', '.bai', fn), bed))
+    return(bam + bai)
+
 rule peakachu:
     input:
         make_peakachu_input()
 
+rule peakachu_convert_to_bam:
+    shell:
+        'echo converting bed to bam'
+
 rule peakachu_impl:
     input:
+        # make_peakachu_bam_conversion,
+        make_peakachu_bam_conversion,
         'input/{id}'
     output:
         'output/peakachu/{id}_peakachu.bed'
@@ -30,8 +44,8 @@ rule peakachu_impl:
         genome = config['genome']
     conda:
         'envs/peakachu.yaml'
-    shell:
-        'echo {input} {output}'
+    script:
+        'scripts/peakachu.py'
 
 ### example bed to bam peakachu
 
