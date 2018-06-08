@@ -57,6 +57,10 @@ rule peakachu_impl:
         'output/peakachu/{id}_peakachu.bed'
     log:
         'log/peakachu/{id}_peakachu.log'
+    params:
+        genome = config['genome']
+    conda:
+        'envs/peakachu.yaml'
     shell:
         'echo {input} {output}'
 
