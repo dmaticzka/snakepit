@@ -7,9 +7,10 @@ rule bed_to_bam:
     params:
         genome = config['genome']
     conda:
-        '../envs/bedtools.yaml'
+        '../envs/bedtobam.yaml'
     shell:
-        'bedtools bedtobam -i {input.bed} -g {input.limits} > {output}'
+        'bedtools bedtobam -i {input.bed} -g {input.limits} | '
+        'samtools sort > {output}'
 
 rule index_bam:
     input:
