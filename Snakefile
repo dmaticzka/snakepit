@@ -19,7 +19,7 @@ def make_peakachu_input():
     # this expects directories under input/ that contain bed files
     # in directories named signal and control
     fns = get_input_dirs()
-    chdir = list(map(lambda fn: fn.replace('input/','peakachu/'), fns))
+    chdir = list(map(lambda fn: fn.replace('input/','output/peakachu/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
     return(chsuff)
 
@@ -52,11 +52,11 @@ rule peakachu:
 
 rule peakachu_impl:
     input:
-        'input/{id}_{genome}'
+        'input/{id}'
     output:
-        'peakachu/{id}_{genome}_peakachu.bed'
+        'output/peakachu/{id}_peakachu.bed'
     log:
-        'peakachu/{id}_{genome}_peakachu.log'
+        'log/peakachu/{id}_peakachu.log'
     shell:
         'echo {input} {output}'
 
