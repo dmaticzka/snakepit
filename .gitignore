@@ -1,1 +1,4 @@
 .snakemake
+input
+output
+log
