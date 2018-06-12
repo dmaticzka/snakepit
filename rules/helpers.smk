@@ -1,3 +1,11 @@
+def get_genome_limits(wildcards):
+    return('{}.limits'.format(config['genome']))
+
+def strip_bedngz(fns):
+    rmgz = list(map(lambda fn: re.sub(r'$', '.gz', fn), fns))
+    rmbed = list(map(lambda fn: re.sub(r'$', '.bed', fn), rmgz))
+    return(rmbed)
+
 rule genome_impl:
     output:
         limits = '{genome}.limits'

@@ -1,0 +1,9 @@
+channels:
+  - dmaticzka/label/nightly
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bedtools
+  - misc_scripts
+  - deeptools
