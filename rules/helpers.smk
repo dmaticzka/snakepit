@@ -8,7 +8,7 @@ def strip_bedngz(fns):
 
 rule genome_impl:
     output:
-        limits = '{genome}.limits'
+        limits = temp('{genome}.limits')
     conda:
         '../envs/mysql.yaml'
     shell:
@@ -19,6 +19,6 @@ rule genome_nohead_impl:
     input:
         limits = '{genome}.limits'
     output:
-        limits_nohead = '{genome}.limits_nohead'
+        limits_nohead = temp('{genome}.limits_nohead')
     shell:
         'grep -v "^chrom" {input.limits} > {output.limits_nohead}'
