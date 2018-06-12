@@ -1,0 +1,3 @@
+bed_correlation_heatmap_impl:
+    threads: 1
+    vmem: 50G
