@@ -1,8 +1,8 @@
 rule genome_impl:
     output:
         limits = '{genome}.limits'
-    # conda:
-        # '../envs/mysql.yaml'
+    conda:
+        '../envs/mysql.yaml'
     shell:
         'mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -e '
         '"select chrom, size from hg19.chromInfo"  > {output.limits}'
