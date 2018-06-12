@@ -1,5 +1,5 @@
 def get_genome_limits(wildcards):
-    return('{}.limits'.format(config['genome']))
+    return('output/{}.limits'.format(config['genome']))
 
 def strip_bedngz(fns):
     rmgz = list(map(lambda fn: re.sub(r'$', '.gz', fn), fns))
@@ -8,7 +8,7 @@ def strip_bedngz(fns):
 
 rule genome_impl:
     output:
-        limits = temp('{genome}.limits')
+        limits = '{genome}.limits'
     conda:
         '../envs/mysql.yaml'
     shell:
@@ -19,6 +19,6 @@ rule genome_nohead_impl:
     input:
         limits = '{genome}.limits'
     output:
-        limits_nohead = temp('{genome}.limits_nohead')
+        limits_nohead = '{genome}.limits_nohead'
     shell:
         'grep -v "^chrom" {input.limits} > {output.limits_nohead}'
