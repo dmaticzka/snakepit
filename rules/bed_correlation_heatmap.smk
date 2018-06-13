@@ -24,7 +24,7 @@ rule bed_correlation_heatmap_impl:
     conda:
         '../envs/bed_correlation_heatmap.yaml'
     shell:
-        'LABELS=`basename -s .bed.gz -s .bed {params.bed}`;'
+        'LABELS=`basename -s .gz {params.bed} | sed "s:.bed$::g"`;'
         'bedtools makewindows -g {input.limits} -w {params.window_size} | '
         'multiBedSummary.py '
         '--regions - '
