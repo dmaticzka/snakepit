@@ -25,10 +25,8 @@ def make_peakachu_bam_conversion(wildcards):
 
 def make_peakachu_size_factors(wildcards):
     id = wildcards.id
-    # this is a really evil hack. at the time this is evaluated we did not yet create the bam files
-    # so we've got to use bed and bed.gz
-    signal = "1 " * len(glob.glob('input/{}/signal/*.bed'.format(id))) + "1 " * len(glob.glob('input/{}/signal/*.bed.gz'.format(id)))
-    control = "0.75 " * len(glob.glob('input/{}/control/*.bed'.format(id))) + "0.75 " * len(glob.glob('input/{}/control/*.bed.gz'.format(id)))
+    signal = "1 " * len(glob.glob('input/{}/signal/*.bed'.format(id)))
+    control = "0.75 " * len(glob.glob('input/{}/control/*.bed'.format(id)))
     return(signal + control)
 
 rule peakachu:
