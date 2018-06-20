@@ -1,9 +1,12 @@
+localrules: bed_to_bam, gunzip, index_bam
+
+
 rule bed_to_bam:
     input:
         bed = '{id}.bed',
         limits = lambda wildcards: "{}.limits".format(config["genome"])
     output:
-        '{id}.bam'
+        temporary('{id}.bam')
     params:
         genome = config['genome']
     conda:
@@ -17,7 +20,7 @@ rule gunzip:
     input:
         '{id}.gz'
     output:
-        '{id}'
+        temporary('{id}')
     shell:
         'zcat {input} > {output}'
 
