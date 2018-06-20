@@ -4,3 +4,6 @@ bed_correlation_heatmap_impl:
 genome_impl:
     threads: 1
     vmem: 1.3G
+peakachu_impl:
+    threads: 24
+    vmem: 1.3G

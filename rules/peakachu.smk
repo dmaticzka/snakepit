@@ -7,8 +7,8 @@ def make_peakachu_input():
     return(chsuff)
 
 def make_peakachu_bam_conversion(wildcards):
-    signal = get_input_bed("input/{}/signal".format(wildcards.id))
-    control = get_input_bed("input/{}/control".format(wildcards.id))
+    signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
+    control = get_input_bedngz("input/{}/control".format(wildcards.id))
     bed = signal + control
     bam = list(map(lambda fn: re.sub(r'.bed$', '.bam', fn), bed))
     bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
@@ -16,8 +16,10 @@ def make_peakachu_bam_conversion(wildcards):
 
 def make_peakachu_size_factors(wildcards):
     id = wildcards.id
-    signal = "1 " * len(glob.glob('input/{}/signal/*.bam'.format(id)))
-    control = "0 " * len(glob.glob('input/{}/control/*.bam'.format(id)))
+    # this is a really evil hack. at the time this is evaluated we did not yet create the bam files
+    # so we've got to use bed and bed.gz
+    signal = "1 " * len(glob.glob('input/{}/signal/*.bed'.format(id))) + "1 " * len(glob.glob('input/{}/signal/*.bed.gz'.format(id)))
+    control = "0.75 " * len(glob.glob('input/{}/control/*.bed'.format(id))) + "0.75 " * len(glob.glob('input/{}/control/*.bed.gz'.format(id)))
     return(signal + control)
 
 rule peakachu:
@@ -35,7 +37,6 @@ rule peakachu_impl:
     params:
         genome = config['genome'],
         size_factors = make_peakachu_size_factors
-
     shadow: "shallow"
     threads: 1
     conda:
