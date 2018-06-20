@@ -6,13 +6,22 @@ def make_peakachu_input():
     chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
     return(chsuff)
 
+
+def make_peakachu_bed_input(wildcards):
+    signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
+    control = get_input_bedngz("input/{}/control".format(wildcards.id))
+    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), signal + control))
+    return(bed)
+
+
 def make_peakachu_bam_conversion(wildcards):
     signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
     control = get_input_bedngz("input/{}/control".format(wildcards.id))
-    bed = signal + control
+    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), signal + control))
     bam = list(map(lambda fn: re.sub(r'.bed$', '.bam', fn), bed))
     bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
     return(bam + bai)
+
 
 def make_peakachu_size_factors(wildcards):
     id = wildcards.id
@@ -28,7 +37,8 @@ rule peakachu:
 
 rule peakachu_impl:
     input:
-        bam = make_peakachu_bam_conversion,
+        bed = temporary(make_peakachu_bed_input),
+        bam = temporary(make_peakachu_bam_conversion),
         dir = 'input/{id}'
     output:
         bed = 'output/peakachu/{id}_peakachu.bed'

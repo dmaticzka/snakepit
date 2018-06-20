@@ -12,6 +12,16 @@ rule bed_to_bam:
         'bedtools bedtobam -i {input.bed} -g {input.limits} | '
         'samtools sort > {output}'
 
+
+rule gunzip:
+    input:
+        '{id}.gz'
+    output:
+        '{id}'
+    shell:
+        'zcat {input} > {output}'
+
+
 rule index_bam:
     input:
         '{id}.bam'
