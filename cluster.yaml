@@ -5,5 +5,5 @@ genome_impl:
     threads: 1
     vmem: 1.3G
 peakachu_impl:
-    threads: 24
-    vmem: 1.3G
+    threads: 6
+    vmem: '{resources.vmem}G'

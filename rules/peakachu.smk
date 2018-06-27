@@ -46,7 +46,9 @@ rule peakachu_impl:
         genome = config['genome'],
         size_factors = make_peakachu_size_factors
     shadow: "shallow"
-    threads: 1
+    threads: 6
+    resources:
+        vmem = lambda wildcards, attempt: int((2**(attempt+2))/6)
     conda:
         '../envs/peakachu.yaml'
     shell:
