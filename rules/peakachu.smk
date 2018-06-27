@@ -43,7 +43,7 @@ rule bed_slop10:
     conda:
         '../envs/bedtools.yaml'
     shell:
-        'bedools slop -b 10 -g {input.limits} -i {input} > {output}'
+        'bedtools slop -i {input.bed} -g {input.limits} -b 10 > {output}'
 
 
 rule peakachu_impl:
