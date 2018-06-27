@@ -8,3 +8,4 @@ dependencies:
   - r-base=3.4.1
   - bedops
   - bedtools
+  - gawk
