@@ -1,3 +1,6 @@
+localrules: bed_slop10
+
+
 def make_peakachu_input():
     # this expects directories under input/ that contain bed files
     # in directories named signal and control
@@ -30,9 +33,11 @@ def make_peakachu_size_factors(wildcards):
     control = "0.75 " * len(glob.glob('input/{}/control/*.bed'.format(id)))
     return(signal + control)
 
+
 rule peakachu:
     input:
         make_peakachu_input()
+
 
 rule bed_slop10:
     input:
