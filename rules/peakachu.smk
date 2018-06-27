@@ -17,8 +17,9 @@ def make_peakachu_bed_input(wildcards):
 def make_peakachu_bam_conversion(wildcards):
     signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
     control = get_input_bedngz("input/{}/control".format(wildcards.id))
-    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), signal + control))
-    bam = list(map(lambda fn: re.sub(r'.bed$', '.bam', fn), bed))
+    chdir = list(map(lambda fn: fn.replace('input/', 'output/peakachu/'), signal + control))
+    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), chdir))
+    bam = list(map(lambda fn: re.sub(r'.bed$', '_slop10.bam', fn), bed))
     bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
     return(bam + bai)
 
@@ -32,6 +33,18 @@ def make_peakachu_size_factors(wildcards):
 rule peakachu:
     input:
         make_peakachu_input()
+
+rule bed_slop10:
+    input:
+        bed = 'input/{dir}/{lib}/{id}.bed',
+        limits = lambda wildcards: "{}.limits".format(config["genome"])
+    output:
+        'output/peakachu/{dir}/{lib}/{id}_slop10.bed'
+    conda:
+        '../envs/bedtools.yaml'
+    shell:
+        'bedools slop -b 10 -g {input.limits} -i {input} > {output}'
+
 
 rule peakachu_impl:
     input:
