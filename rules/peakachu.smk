@@ -57,7 +57,8 @@ rule peakachu_impl:
         bam = temporary(make_peakachu_bam_conversion),
         dir = 'input/{id}'
     output:
-        bed = 'output/peakachu/{id}_peakachu.bed'
+        bed = 'output/peakachu/{id}_peakachu.bed',
+        dir = 'output/peakachu/{id}/'
     log:
         'log/peakachu/{id}_peakachu.log'
     params:
@@ -71,16 +72,16 @@ rule peakachu_impl:
         '../envs/peakachu.yaml'
     shell:
         'peakachu adaptive '
-        '--exp_libs {input.dir}/signal/*.bam '
-        '--ctr_libs {input.dir}/control/*.bam '
+        '--exp_libs {output.dir}/signal/*.bam '
+        '--ctr_libs {output.dir}/control/*.bam '
         '--pairwise_replicates '
         '--max_proc {threads} '
         '-m 0 -n manual --size_factors {params.size_factors} '
-        '--output_folder {input.dir} 2>&1 > {log}; '
-        'GFF={input.dir}/peak_annotations/*.gff; '
+        '--output_folder {output.dir} 2>&1 > {log}; '
+        'GFF={output.dir}/peak_annotations/*.gff; '
         'if [[ -f ${{GFF[0]}} ]]; '
         'then '
-        '  cat {input.dir}/peak_annotations/*.gff | '
+        '  cat {output.dir}/peak_annotations/*.gff | '
         '  bedtools sort -i - | '
         '  gff2bed | '
         '  awk "BEGIN{{OFS=\"\\t\"}}{{$5=255; print}}" > {output.bed}; '
