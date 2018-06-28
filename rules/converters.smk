@@ -1,6 +1,15 @@
 localrules: bed_to_bam, gunzip, index_bam
 
 
+rule gunzip:
+    input:
+        '{id}.gz'
+    output:
+        temporary('{id,^(.gz$)}')
+    shell:
+        'zcat {input} > {output}'
+
+
 rule bed_to_bam:
     input:
         bed = '{id}.bed',
@@ -14,15 +23,6 @@ rule bed_to_bam:
     shell:
         'bedtools bedtobam -i {input.bed} -g {input.limits} | '
         'samtools sort > {output}'
-
-
-rule gunzip:
-    input:
-        '{id}.gz'
-    output:
-        temporary('{id}')
-    shell:
-        'zcat {input} > {output}'
 
 
 rule index_bam:
