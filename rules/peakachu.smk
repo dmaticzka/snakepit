@@ -1,4 +1,4 @@
-localrules: bed_slop10, peakachu_initial_peaks
+localrules: bed_slop10, peakachu_bed, peakachu_initial_peaks
 
 
 def make_peakachu_input():
@@ -8,7 +8,7 @@ def make_peakachu_input():
     chdir = list(map(lambda fn: fn.replace('input/','output/peakachu/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
     initpeaks = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks.csv.bed', fn), chdir))
-    return(chsuff)
+    return(chsuff + initpeaks)
 
 
 def make_peakachu_bed_input(wildcards):
@@ -58,8 +58,6 @@ rule peakachu_impl:
         bam = temporary(make_peakachu_bam_conversion),
         dir = 'input/{id}'
     output:
-        bed = 'output/peakachu/{id}_peakachu.bed',
-        initial_peaks = 'output/peakachu/{id}_peakachu_initial_peaks.csv',
         dir = 'output/peakachu/{id}'
     log:
         'log/peakachu/{id}_peakachu.log'
@@ -80,31 +78,40 @@ rule peakachu_impl:
         '--max_proc {threads} '
         '-m 0 -n manual --size_factors {params.size_factors} '
         '--output_folder {output.dir} 2>&1 > {log}; '
-        'GFF=({output.dir}/peak_annotations/*.gff); '
-        '# copy peaks; '
+
+
+rule peakachu_bed:
+    input:
+        peakachudir = 'output/peakachu/{id}',
+    output:
+        peaks_bed = 'output/peakachu/{id}_peakachu.bed',
+    shell:
+        'GFF=({input.peakachudir}/peak_annotations/*.gff); '
         'if [[ -f ${{GFF[0]}} ]]; '
         'then '
-        '  cat {output.dir}/peak_annotations/*.gff | '
+        '  cat {input.peakachudir}/peak_annotations/*.gff | '
         '  bedtools sort -i - | '
         '  gff2bed | '
-        '  awk "BEGIN{{OFS=\"\\t\"}}{{$5=255; print}}" > {output.bed}; '
+        '  cut -f 1-6 | '
+        '  awk \'BEGIN{{OFS=\"\\t\"}}{{$5=255; print}}\' > {output.peaks_bed}; '
         'else '
-        '  touch {output.bed}; '
+        '  touch {output.peaks_bed}; '
         'fi; '
-        '# copy initial peaks'
-        'if [[ -f {output.dir}/initial_peaks.csv ]]; '
-        'then '
-        '  cp {output.dir}/initial_peaks.csv {output.initial_peaks}; '
-        'else '
-        '  touch {output.initial_peaks}; '
-        'fi;'
+
 
 rule peakachu_initial_peaks:
     input:
-        peakachudir = 'output/peakachu/{id}_peakachu_initial_peaks.csv',
+        peakachudir = 'output/peakachu/{id}',
     output:
+        initial_peaks = 'output/peakachu/{id}_peakachu_initial_peaks.csv',
         initial_peaks_bed = 'output/peakachu/{id}_peakachu_initial_peaks.csv.bed',
     conda:
-        '../envs/misc_scripts.env'
+        '../envs/misc_scripts.yaml'
     shell:
-        'peakachu_initial_peaks_to_bed.R {input.peakachudir}'
+        'if [[ -f {input.peakachudir}/initial_peaks.csv ]]; '
+        'then '
+        '  cp {input.peakachudir}/initial_peaks.csv {output.initial_peaks}; '
+        'else '
+        '  touch {output.initial_peaks}; '
+        'fi;'
+        'peakachu_initial_peaks_to_bed.R {output.initial_peaks}; '
