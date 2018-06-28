@@ -7,3 +7,6 @@ genome_impl:
 peakachu_impl:
     threads: 6
     vmem: '{resources.vmem}G'
+peakachu_window_impl:
+    threads: 6
+    vmem: '{resources.vmem}G'
