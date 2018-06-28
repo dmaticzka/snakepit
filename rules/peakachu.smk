@@ -1,4 +1,4 @@
-localrules: peakachu, peakachu_window, peakachu_bed_slop10, peakachu_bed, peakachu_initial_peaks, peakachu_window_bed_slop10, peakachu_window_bed, peakachu_window_initial_peaks
+localrules: peakachu, peakachu_window, peakachu_bed_slop10, peakachu_bed, peakachu_initial_peaks
 
 
 def make_peakachu_input():
