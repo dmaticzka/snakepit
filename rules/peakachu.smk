@@ -39,6 +39,16 @@ def make_peakachu_bam_conversion(wildcards):
     return(bam + bai)
 
 
+def make_peakachu_window_bam_conversion(wildcards):
+    signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
+    control = get_input_bedngz("input/{}/control".format(wildcards.id))
+    chdir = list(map(lambda fn: fn.replace('input/', 'output/peakachu_window/'), signal + control))
+    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), chdir))
+    bam = list(map(lambda fn: re.sub(r'.bed$', '_slop10.bam', fn), bed))
+    bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
+    return(bam + bai)
+
+
 def make_peakachu_size_factors(wildcards):
     id = wildcards.id
     signal = "1 " * len(glob.glob('input/{}/signal/*.bed'.format(id)))
@@ -138,7 +148,7 @@ rule peakachu_initial_peaks:
 rule peakachu_window_impl:
     input:
         bed = temporary(make_peakachu_bed_input),
-        bam = temporary(make_peakachu_bam_conversion),
+        bam = temporary(make_peakachu_window_bam_conversion),
         dir = 'input/{id}'
     output:
         dir = 'output/peakachu_window/{id}'
