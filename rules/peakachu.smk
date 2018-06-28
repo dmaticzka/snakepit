@@ -78,7 +78,7 @@ rule peakachu_impl:
         '--max_proc {threads} '
         '-m 0 -n manual --size_factors {params.size_factors} '
         '--output_folder {output.dir} 2>&1 > {log}; '
-        'GFF={output.dir}/peak_annotations/*.gff; '
+        'GFF=({output.dir}/peak_annotations/*.gff); '
         'if [[ -f ${{GFF[0]}} ]]; '
         'then '
         '  cat {output.dir}/peak_annotations/*.gff | '
