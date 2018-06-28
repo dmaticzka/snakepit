@@ -1,4 +1,4 @@
-localrules: bed_slop10
+localrules: bed_slop10, peakachu_initial_peaks
 
 
 def make_peakachu_input():
@@ -7,6 +7,7 @@ def make_peakachu_input():
     fns = get_input_dirs()
     chdir = list(map(lambda fn: fn.replace('input/','output/peakachu/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
+    initpeaks = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks.csv.bed', fn), chdir))
     return(chsuff)
 
 
@@ -58,7 +59,8 @@ rule peakachu_impl:
         dir = 'input/{id}'
     output:
         bed = 'output/peakachu/{id}_peakachu.bed',
-        dir = 'output/peakachu/{id}/'
+        initial_peaks = 'output/peakachu/{id}_peakachu_initial_peaks.csv',
+        dir = 'output/peakachu/{id}'
     log:
         'log/peakachu/{id}_peakachu.log'
     params:
@@ -79,6 +81,7 @@ rule peakachu_impl:
         '-m 0 -n manual --size_factors {params.size_factors} '
         '--output_folder {output.dir} 2>&1 > {log}; '
         'GFF=({output.dir}/peak_annotations/*.gff); '
+        '# copy peaks; '
         'if [[ -f ${{GFF[0]}} ]]; '
         'then '
         '  cat {output.dir}/peak_annotations/*.gff | '
@@ -88,3 +91,20 @@ rule peakachu_impl:
         'else '
         '  touch {output.bed}; '
         'fi; '
+        '# copy initial peaks'
+        'if [[ -f {output.dir}/initial_peaks.csv ]]; '
+        'then '
+        '  cp {output.dir}/initial_peaks.csv {output.initial_peaks}; '
+        'else '
+        '  touch {output.initial_peaks}; '
+        'fi;'
+
+rule peakachu_initial_peaks:
+    input:
+        peakachudir = 'output/peakachu/{id}_peakachu_initial_peaks.csv',
+    output:
+        initial_peaks_bed = 'output/peakachu/{id}_peakachu_initial_peaks.csv.bed',
+    conda:
+        '../envs/misc_scripts.env'
+    shell:
+        'peakachu_initial_peaks_to_bed.R {input.peakachudir}'

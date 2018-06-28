@@ -1,0 +1,9 @@
+channels:
+  - dmaticzka
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - misc_scripts
+  - r-argparse
+  - r-dplyr
