@@ -23,27 +23,25 @@ def make_peakachu_window_input():
 
 
 def make_peakachu_bed_input(wildcards):
-    signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
-    control = get_input_bedngz("input/{}/control".format(wildcards.id))
-    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), signal + control))
+    signal = get_input_bed("input/{}/signal".format(wildcards.id))
+    control = get_input_bed("input/{}/control".format(wildcards.id))
+    bed = signal + control
     return(bed)
 
 
 def make_peakachu_bam_conversion(wildcards):
-    signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
-    control = get_input_bedngz("input/{}/control".format(wildcards.id))
-    chdir = list(map(lambda fn: fn.replace('input/', 'output/peakachu/'), signal + control))
-    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), chdir))
+    signal = get_input_bed("input/{}/signal".format(wildcards.id))
+    control = get_input_bed("input/{}/control".format(wildcards.id))
+    bed = list(map(lambda fn: fn.replace('input/', 'output/peakachu/'), signal + control))
     bam = list(map(lambda fn: re.sub(r'.bed$', '_slop10.bam', fn), bed))
     bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
     return(bam + bai)
 
 
 def make_peakachu_window_bam_conversion(wildcards):
-    signal = get_input_bedngz("input/{}/signal".format(wildcards.id))
-    control = get_input_bedngz("input/{}/control".format(wildcards.id))
-    chdir = list(map(lambda fn: fn.replace('input/', 'output/peakachu_window/'), signal + control))
-    bed = list(map(lambda fn: re.sub(r'.gz$', '', fn), chdir))
+    signal = get_input_bed("input/{}/signal".format(wildcards.id))
+    control = get_input_bed("input/{}/control".format(wildcards.id))
+    bed = list(map(lambda fn: fn.replace('input/', 'output/peakachu_window/'), signal + control))
     bam = list(map(lambda fn: re.sub(r'.bed$', '_slop10.bam', fn), bed))
     bai = list(map(lambda fn: re.sub(r'.bam$', '.bam.bai', fn), bam))
     return(bam + bai)
