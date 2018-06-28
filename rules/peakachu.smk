@@ -133,7 +133,7 @@ rule peakachu_bed_slop10:
 
 rule peakachu_bed:
     input:
-        peakachudir = 'output/peakachu/{id}',
+        peakachudir = 'output/{peakachuvariant}/{id}',
     output:
         peaks_bed = 'output/{peakachuvariant}/{id}_peakachu.bed',
     conda:
