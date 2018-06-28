@@ -77,8 +77,9 @@ rule peakachu_impl:
         size_factors = make_peakachu_size_factors
     shadow: "shallow"
     threads: 6
+    # use either 90 or 180 GB RAM
     resources:
-        vmem = lambda wildcards, attempt: int((2**(attempt+2))/6)
+        vmem = lambda wildcards, attempt: int(90*attempt/6)
     conda:
         '../envs/peakachu.yaml'
     shell:
