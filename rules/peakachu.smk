@@ -85,6 +85,8 @@ rule peakachu_bed:
         peakachudir = 'output/peakachu/{id}',
     output:
         peaks_bed = 'output/peakachu/{id}_peakachu.bed',
+    conda:
+        '../envs/peakachu.yaml'
     shell:
         'GFF=({input.peakachudir}/peak_annotations/*.gff); '
         'if [[ -f ${{GFF[0]}} ]]; '
