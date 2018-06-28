@@ -66,7 +66,6 @@ rule peakachu_window:
 
 rule peakachu_impl:
     input:
-        bed = temporary(make_peakachu_bed_input),
         bam = temporary(make_peakachu_bam_conversion),
         dir = 'input/{id}'
     output:
@@ -92,60 +91,8 @@ rule peakachu_impl:
         '--output_folder {output.dir} 2>&1 > {log}; '
 
 
-rule peakachu_bed_slop10:
-    input:
-        bed = 'input/{dir}/{lib}/{id}.bed',
-        limits = lambda wildcards: "{}.limits".format(config["genome"])
-    output:
-        'output/peakachu/{dir}/{lib}/{id}_slop10.bed'
-    conda:
-        '../envs/bedtools.yaml'
-    shell:
-        'bedtools slop -i {input.bed} -g {input.limits} -b 10 > {output}'
-
-
-rule peakachu_bed:
-    input:
-        peakachudir = 'output/peakachu/{id}',
-    output:
-        peaks_bed = 'output/peakachu/{id}_peakachu.bed',
-    conda:
-        '../envs/peakachu.yaml'
-    shell:
-        'GFF=({input.peakachudir}/peak_annotations/*.gff); '
-        'if [[ -f ${{GFF[0]}} ]]; '
-        'then '
-        '  cat {input.peakachudir}/peak_annotations/*.gff | '
-        '  bedtools sort -i - | '
-        '  gff2bed | '
-        '  cut -f 1-6 | '
-        '  awk \'BEGIN{{OFS=\"\\t\"}}{{$5=255; print}}\' > {output.peaks_bed}; '
-        'else '
-        '  touch {output.peaks_bed}; '
-        'fi; '
-
-
-rule peakachu_initial_peaks:
-    input:
-        peakachudir = 'output/peakachu/{id}',
-    output:
-        initial_peaks = 'output/peakachu/{id}_peakachu_initial_peaks.csv',
-        initial_peaks_bed = 'output/peakachu/{id}_peakachu_initial_peaks.csv.bed',
-    conda:
-        '../envs/misc_scripts.yaml'
-    shell:
-        'if [[ -f {input.peakachudir}/initial_peaks.csv ]]; '
-        'then '
-        '  cp {input.peakachudir}/initial_peaks.csv {output.initial_peaks}; '
-        'else '
-        '  touch {output.initial_peaks}; '
-        'fi;'
-        'peakachu_initial_peaks_to_bed.R {output.initial_peaks}; '
-
-
 rule peakachu_window_impl:
     input:
-        bed = temporary(make_peakachu_bed_input),
         bam = temporary(make_peakachu_window_bam_conversion),
         dir = 'input/{id}'
     output:
@@ -172,23 +119,23 @@ rule peakachu_window_impl:
         '--output_folder {output.dir} 2>&1 > {log}; '
 
 
-rule peakachu_window_bed_slop10:
+rule peakachu_bed_slop10:
     input:
         bed = 'input/{dir}/{lib}/{id}.bed',
         limits = lambda wildcards: "{}.limits".format(config["genome"])
     output:
-        'output/peakachu_window/{dir}/{lib}/{id}_slop10.bed'
+        'output/{peakachuvariant}/{dir}/{lib}/{id}_slop10.bed'
     conda:
         '../envs/bedtools.yaml'
     shell:
         'bedtools slop -i {input.bed} -g {input.limits} -b 10 > {output}'
 
 
-rule peakachu_window_bed:
+rule peakachu_bed:
     input:
-        peakachudir = 'output/peakachu_window/{id}',
+        peakachudir = 'output/peakachu/{id}',
     output:
-        peaks_bed = 'output/peakachu_window/{id}_peakachu.bed',
+        peaks_bed = 'output/{peakachuvariant}/{id}_peakachu.bed',
     conda:
         '../envs/peakachu.yaml'
     shell:
@@ -205,12 +152,12 @@ rule peakachu_window_bed:
         'fi; '
 
 
-rule peakachu_window_initial_peaks:
+rule peakachu_initial_peaks:
     input:
-        peakachudir = 'output/peakachu_window/{id}',
+        peakachudir = 'output/{peakachuvariant}/{id}',
     output:
-        initial_peaks = 'output/peakachu_window/{id}_peakachu_initial_peaks.csv',
-        initial_peaks_bed = 'output/peakachu_window/{id}_peakachu_initial_peaks.csv.bed',
+        initial_peaks = 'output/{peakachuvariant}/{id}_peakachu_initial_peaks.csv',
+        initial_peaks_bed = 'output/{peakachuvariant}/{id}_peakachu_initial_peaks.csv.bed',
     conda:
         '../envs/misc_scripts.yaml'
     shell:
