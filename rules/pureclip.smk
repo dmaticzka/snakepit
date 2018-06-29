@@ -1,4 +1,4 @@
-localrules: pureclip combine_bed_to_bam
+localrules: pureclip, combine_bed_to_bam
 
 
 def make_pureclip_input():
