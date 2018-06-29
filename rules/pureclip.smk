@@ -40,7 +40,7 @@ rule pureclip_impl:
 
 rule combine_bed_to_bam:
     input:
-        dir = 'input/{id}/{sigtype}/',
+        dir = 'input/{id}/{sigtype}',
         limits = lambda wildcards: "{}.limits".format(config["genome"]),
     output:
         combined_bam = 'output/pureclip/{id}/{sigtype}.bam',
@@ -48,6 +48,5 @@ rule combine_bed_to_bam:
         '../envs/bedtobam.yaml'
     shell:
         'cat {input.dir}/*.bed | '
-        'sort -k1,1 -k2,2n | '
         'bedtools bedtobam -i - -g {input.limits} | '
         'samtools sort > {output.combined_bam}; '
