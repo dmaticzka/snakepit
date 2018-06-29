@@ -31,7 +31,7 @@ rule pureclip_impl:
     shell:
         'pureclip '
         '-i {input.sig_bam} -bai {input.sig_bai} '
-        '-ibam {input.ctl_bam} -ibai {input.ctl_bam} '
+        '-ibam {input.ctl_bam} -ibai {input.ctl_bai} '
         '-g {params.genome} '
         '-iv "chr1;chr2;chr3;" '
         '-nt {threads} '

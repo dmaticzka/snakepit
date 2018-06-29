@@ -10,3 +10,6 @@ peakachu_impl:
 peakachu_window_impl:
     threads: 6
     vmem: '{resources.vmem}G'
+pureclip_impl:
+    threads: 6
+    vmem: 16G
