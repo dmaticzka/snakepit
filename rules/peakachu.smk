@@ -1,3 +1,6 @@
+import math
+
+
 localrules: peakachu, peakachu_window, peakachu_bed_slop10, peakachu_bed, peakachu_initial_peaks
 
 
@@ -77,9 +80,9 @@ rule peakachu_impl:
         size_factors = make_peakachu_size_factors
     shadow: "shallow"
     threads: 6
-    # use either 100 or 200 GB RAM
+    # use 6, 12, 18, 36, 66 GB of RAM
     resources:
-        vmem = lambda wildcards, attempt: int(100*attempt/6)
+        vmem = lambda wildcards, attempt: math.ceil((2**(attempt+1))/6)
     conda:
         '../envs/peakachu.yaml'
     shell:
@@ -105,8 +108,9 @@ rule peakachu_window_impl:
         size_factors = make_peakachu_size_factors
     shadow: "shallow"
     threads: 6
+    # use 120,240,... GB RAM
     resources:
-        vmem = lambda wildcards, attempt: int((2**(attempt+4))/6)
+        vmem = lambda wildcards, attempt: int(120*attempt/6)
     conda:
         '../envs/peakachu.yaml'
     shell:
