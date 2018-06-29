@@ -27,7 +27,7 @@ rule pureclip_impl:
         genome = '~/genomes/{}.fa'.format(config['genome']),
     conda:
         '../envs/pureclip.yaml'
-    threads: 12
+    threads: 8
     shell:
         'pureclip '
         '-i {input.sig_bam} -bai {input.sig_bai} '
