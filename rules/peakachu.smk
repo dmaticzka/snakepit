@@ -1,7 +1,7 @@
 import math
 
 
-localrules: peakachu, peakachu_window, peakachu_bed_slop10, peakachu_bed, peakachu_initial_peaks
+localrules: peakachu, peakachu_window, peakachu_bed_slop10, peakachu_bed, peakachu_initial_peaks, peakachu_plots
 
 
 def make_peakachu_input():
@@ -11,7 +11,9 @@ def make_peakachu_input():
     chdir = list(map(lambda fn: fn.replace('input/','output/peakachu/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
     initpeaks = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks.csv.bed', fn), chdir))
-    return(chsuff + initpeaks)
+    maplot = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks_maplot.png', fn), chdir))
+    hexbin = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks_hexbin.pdf', fn), chdir))
+    return(chsuff + initpeaks + maplot + hexbin)
 
 
 def make_peakachu_window_input():
@@ -21,8 +23,9 @@ def make_peakachu_window_input():
     chdir = list(map(lambda fn: fn.replace('input/','output/peakachu_window/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'$', '_peakachu.bed', fn), chdir))
     initpeaks = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks.csv.bed', fn), chdir))
-    print(chsuff + initpeaks)
-    return(chsuff + initpeaks)
+    maplot = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks_maplot.png', fn), chdir))
+    hexbin = list(map(lambda fn: re.sub(r'$', '_peakachu_initial_peaks_hexbin.pdf', fn), chdir))
+    return(chsuff + initpeaks + maplot + hexbin)
 
 
 def make_peakachu_bed_input(wildcards):
@@ -78,7 +81,6 @@ rule peakachu_impl:
     params:
         genome = config['genome'],
         size_factors = make_peakachu_size_factors
-    shadow: "shallow"
     threads: 6
     # use 6, 12, 18, 36, 66 GB of RAM
     resources:
@@ -106,7 +108,6 @@ rule peakachu_window_impl:
     params:
         genome = config['genome'],
         size_factors = make_peakachu_size_factors
-    shadow: "shallow"
     threads: 6
     # use 120,240,... GB RAM
     resources:
@@ -173,3 +174,14 @@ rule peakachu_initial_peaks:
         '  touch {output.initial_peaks}; '
         'fi;'
         'peakachu_initial_peaks_to_bed.R {output.initial_peaks}; '
+
+
+rule peakachu_plots:
+    input:
+        peakachudir = 'output/{peakachuvariant}/{id}',
+    output:
+        maplot = 'output/{peakachuvariant}/{id}_peakachu_initial_peaks_maplot.png',
+        hexbin = 'output/{peakachuvariant}/{id}_peakachu_initial_peaks_hexbin.pdf',
+    shell:
+        'cp {input.peakachudir}/plots/Initial_peaks_MA_plot.png {output.maplot}; '
+        'cp {input.peakachudir}/plots/Initial_peaks_HexBin_plot.pdf {output.hexbin}; '
