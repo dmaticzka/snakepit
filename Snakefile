@@ -9,6 +9,7 @@ include: 'rules/bed_correlation_heatmap.smk'
 include: 'rules/converters.smk'
 include: 'rules/targetdist.smk'
 include: 'rules/peakachu.smk'
+include: 'rules/pureclip.smk'
 
 rule all:
     message: 'Help Text Here'

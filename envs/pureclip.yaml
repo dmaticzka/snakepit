@@ -3,6 +3,4 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - bedtools
-  - coreutils
-  - gawk
+  - pureclip
