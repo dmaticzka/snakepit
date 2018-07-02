@@ -53,5 +53,6 @@ rule combine_bed_to_bam:
         vmem = lambda wildcards, attempt: int(2**attempt)
     shell:
         'cat {input.dir}/*.bed | '
+        'bedtools slop -b 10 -g {input.limits} -i - | '
         'bedtools bedtobam -i - -g {input.limits} | '
         'samtools sort > {output.combined_bam}; '
