@@ -1,4 +1,4 @@
-localrules: pureclip, combine_bed_to_bam
+localrules: pureclip
 
 
 def make_pureclip_input():
@@ -40,7 +40,7 @@ rule pureclip_impl:
         '-or {output.regions}; '
 
 
-rule combine_bed_to_bam:
+rule pureclip_combine_bed_to_bam:
     input:
         dir = 'input/{id}/{sigtype}',
         limits = lambda wildcards: "{}.limits".format(config["genome"]),

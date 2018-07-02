@@ -1,15 +1,25 @@
+__default__:
+    threads: 1
+    vmem: 2G
+
 bed_correlation_heatmap_impl:
     threads: 1
     vmem: 70G
+
 genome_impl:
     threads: 1
     vmem: 1.3G
+
 peakachu_impl:
     threads: 6
     vmem: '{resources.vmem}G'
 peakachu_window_impl:
     threads: 6
     vmem: '{resources.vmem}G'
+
 pureclip_impl:
     threads: 8
     vmem: '{resources.vmem}G'
+pureclip_combine_bed_to_bam:
+    threads: 1
+    vmem: 2G
