@@ -1,6 +1,6 @@
 __default__:
     threads: 1
-    vmem: 2G
+    vmem: 1G
 
 bed_correlation_heatmap_impl:
     threads: 1
