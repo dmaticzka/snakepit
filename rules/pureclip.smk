@@ -6,7 +6,7 @@ def make_pureclip_input():
     # in directories named signal and control
     fns = get_input_dirs()
     chdir = list(map(lambda fn: fn.replace('input/','output/pureclip/'), fns))
-    chsuff = list(map(lambda fn: re.sub(r'$', '_pureclip.bed', fn), chdir))
+    chsuff = list(map(lambda fn: re.sub(r'$', '_pureclip_sites.bed', fn), chdir))
     return(chsuff)
 
 
@@ -22,7 +22,8 @@ rule pureclip_impl:
         ctl_bam = 'output/pureclip/{id}/control.bam',
         ctl_bai = 'output/pureclip/{id}/control.bam.bai',
     output:
-        bed = 'output/pureclip/{id}_pureclip.bed',
+        sites = 'output/pureclip/{id}_pureclip_sites.bed',
+        regions = 'output/pureclip/{id}_pureclip_regions.bed',
     params:
         genome = '~/genomes/{}.fa'.format(config['genome']),
     conda:
@@ -35,7 +36,8 @@ rule pureclip_impl:
         '-g {params.genome} '
         '-iv "chr1;chr2;chr3;" '
         '-nt {threads} '
-        '-o {output.bed}; '
+        '-o {output.sites} '
+        '-or {output.regions}; '
 
 
 rule combine_bed_to_bam:
