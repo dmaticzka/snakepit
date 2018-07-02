@@ -29,6 +29,9 @@ rule pureclip_impl:
     conda:
         '../envs/pureclip.yaml'
     threads: 8
+    # use 2,4,8 GB per thread
+    resources:
+        vmem = lambda wildcards, attempt: int(2**attempt)
     shell:
         'pureclip '
         '-i {input.sig_bam} -bai {input.sig_bai} '
@@ -48,9 +51,6 @@ rule pureclip_combine_bed_to_bam:
         combined_bam = 'output/pureclip/{id}/{sigtype}.bam',
     conda:
         '../envs/bedtobam.yaml'
-    # use 2,4,8 GB per thread
-    resources:
-        vmem = lambda wildcards, attempt: int(2**attempt)
     shell:
         'cat {input.dir}/*.bed | '
         'bedtools slop -b 10 -g {input.limits} -i - | '
