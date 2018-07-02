@@ -30,7 +30,9 @@ rule index_bam:
         '{id}.bam'
     output:
         '{id}.bam.bai'
+    log:
+        'log/{id}_samtools_index.log'
     conda:
          '../envs/samtools.yaml'
     shell:
-        'samtools index {input}'
+        'samtools index {input} 2>&1 > {log}'

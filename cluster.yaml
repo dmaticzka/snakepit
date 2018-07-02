@@ -12,4 +12,4 @@ peakachu_window_impl:
     vmem: '{resources.vmem}G'
 pureclip_impl:
     threads: 8
-    vmem: 2G
+    vmem: '{resources.vmem}G'

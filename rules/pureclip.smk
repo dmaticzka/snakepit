@@ -48,6 +48,9 @@ rule combine_bed_to_bam:
         combined_bam = 'output/pureclip/{id}/{sigtype}.bam',
     conda:
         '../envs/bedtobam.yaml'
+    # use 2,4,8 GB per thread
+    resources:
+        vmem = lambda wildcards, attempt: int(2**attempt)
     shell:
         'cat {input.dir}/*.bed | '
         'bedtools bedtobam -i - -g {input.limits} | '
