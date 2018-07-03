@@ -30,10 +30,7 @@ rule pureclip_impl:
         genome = '~/genomes/{}.fa'.format(config['genome']),
     conda:
         '../envs/pureclip.yaml',
-    threads: 8
-    # use 2,4,8 GB per thread
-    resources:
-        vmem = lambda wildcards, attempt: int(2**attempt),
+    threads: 4
     shell:
         'pureclip '
         '-i {input.sig_bam} -bai {input.sig_bai} '
