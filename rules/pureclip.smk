@@ -159,4 +159,4 @@ rule pureclip_onlysignal_combine_bam_filter_fmt:
     shell:
         'samtools cat {input.dir}/*.bam | '
         'samtools filter -f 66 | '
-        'samtools view -hb -o {outout.combined_bam}; '
+        'samtools view -hb -o {output.combined_bam}; '
