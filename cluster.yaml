@@ -23,6 +23,9 @@ pureclip_impl:
 pureclip_onlysignal_impl:
     threads: 4
     vmem: 5G
+pureclip_onlysignal_bam_fmt_impl:
+    threads: 4
+    vmem: 5G
 pureclip_combine_bed_to_bam:
     threads: 1
     vmem: 2G

@@ -19,6 +19,15 @@ def make_pureclip_onlysignal_input():
     return(chsuff)
 
 
+def make_pureclip_onlysignal_bam_fmt_input():
+    # this expects directories under input/ that contain bed files
+    # in directories named signal and control
+    fns = get_input_dirs()
+    chdir = list(map(lambda fn: fn.replace('input/','output/pureclip_onlysignal_bam_fmt/'), fns))
+    chsuff = list(map(lambda fn: re.sub(r'$', '_pureclip_sites.bed', fn), chdir))
+    return(chsuff)
+
+
 rule pureclip:
     input:
         make_pureclip_input()
@@ -27,6 +36,11 @@ rule pureclip:
 rule pureclip_onlysignal:
     input:
         make_pureclip_onlysignal_input()
+
+
+rule pureclip_onlysignal_bam_fmt:
+    input:
+        make_pureclip_onlysignal_bam_fmt_input()
 
 
 rule pureclip_impl:
@@ -57,6 +71,30 @@ rule pureclip_impl:
 
 
 rule pureclip_onlysignal_impl:
+    input:
+        sig_bam = 'output/pureclip_onlysignal_bam_fmt/{id}/signal.bam',
+        sig_bai = 'output/pureclip_onlysignal_bam_fmt/{id}/signal.bam.bai',
+    output:
+        sites = 'output/pureclip_onlysignal_bam_fmt/{id}_pureclip_sites.bed',
+        regions = 'output/pureclip_onlysignal_bam_fmt/{id}_pureclip_regions.bed',
+    log:
+        'log/pureclip_onlysignal_bam_fmt/{id}_pureclip.log',
+    params:
+        genome = '~/genomes/{}.fa'.format(config['genome']),
+    conda:
+        '../envs/pureclip.yaml',
+    threads: 4
+    shell:
+        'pureclip '
+        '-i {input.sig_bam} -bai {input.sig_bai} '
+        '-g {params.genome} '
+        '-iv "chr1;chr2;chr3;" '
+        '-nt {threads} '
+        '-o {output.sites} '
+        '-or {output.regions} 2>&1 > {log}; '
+
+
+rule pureclip_onlysignal_bam_fmt_impl:
     input:
         sig_bam = 'output/pureclip_onlysignal/{id}/signal.bam',
         sig_bai = 'output/pureclip_onlysignal/{id}/signal.bam.bai',
@@ -100,7 +138,7 @@ rule pureclip_onlysignal_combine_bed_to_bam:
         dir = 'input/{id}/signal',
         limits = lambda wildcards: "{}.limits".format(config["genome"]),
     output:
-        combined_bam = 'output/pureclip_onlysignal/{id}/{sigtype}.bam',
+        combined_bam = 'output/pureclip_onlysignal/{id}/signal.bam',
     conda:
         '../envs/bedtobam.yaml'
     shell:
@@ -108,3 +146,17 @@ rule pureclip_onlysignal_combine_bed_to_bam:
         'bedtools slop -b 10 -g {input.limits} -i - | '
         'bedtools bedtobam -i - -g {input.limits} | '
         'samtools sort > {output.combined_bam}; '
+
+
+rule pureclip_onlysignal_combine_bam_filter_fmt:
+    input:
+        dir = 'input/{id}/signal',
+        limits = lambda wildcards: "{}.limits".format(config["genome"]),
+    output:
+        combined_bam = 'output/pureclip_onlysignal/{id}/signal.bam',
+    conda:
+        '../envs/bedtobam.yaml'
+    shell:
+        'samtools cat {input.dir}/*.bam | '
+        'samtools filter -f 66 | '
+        'samtools view -hb -o {outout.combined_bam}; '
