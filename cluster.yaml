@@ -10,6 +10,10 @@ genome_impl:
     threads: 1
     vmem: 1.3G
 
+filter_bam_by_bed:
+    threads: 1
+    vmem: '{resources.vmem}G'
+
 peakachu_impl:
     threads: 6
     vmem: '{resources.vmem}G'
