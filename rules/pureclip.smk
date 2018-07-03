@@ -24,14 +24,16 @@ rule pureclip_impl:
     output:
         sites = 'output/pureclip/{id}_pureclip_sites.bed',
         regions = 'output/pureclip/{id}_pureclip_regions.bed',
+    log:
+        'log/pureclip/{id}_pureclip.log',
     params:
         genome = '~/genomes/{}.fa'.format(config['genome']),
     conda:
-        '../envs/pureclip.yaml'
+        '../envs/pureclip.yaml',
     threads: 8
     # use 2,4,8 GB per thread
     resources:
-        vmem = lambda wildcards, attempt: int(2**attempt)
+        vmem = lambda wildcards, attempt: int(2**attempt),
     shell:
         'pureclip '
         '-i {input.sig_bam} -bai {input.sig_bai} '
@@ -40,7 +42,7 @@ rule pureclip_impl:
         '-iv "chr1;chr2;chr3;" '
         '-nt {threads} '
         '-o {output.sites} '
-        '-or {output.regions}; '
+        '-or {output.regions} 2>&1 > {log}; '
 
 
 rule pureclip_combine_bed_to_bam:
