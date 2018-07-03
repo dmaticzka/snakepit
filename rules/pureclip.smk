@@ -36,7 +36,7 @@ rule pureclip_impl:
         '-i {input.sig_bam} -bai {input.sig_bai} '
         '-ibam {input.ctl_bam} -ibai {input.ctl_bai} '
         '-g {params.genome} '
-        '-iv "chr1;chr2;chr3;" '
+        '-iv "chr1;chr2;chr3;chr4;chr5" '
         '-nt {threads} '
         '-o {output.sites} '
         '-or {output.regions} 2>&1 > {log}; '
@@ -52,6 +52,7 @@ rule pureclip_combine_bed_to_bam:
         '../envs/bedtobam.yaml'
     shell:
         'cat {input.dir}/*.bed | '
+        'sort -k1,1 -k2,2n | '
         'bedtools slop -b 10 -g {input.limits} -i - | '
         'bedtools bedtobam -i - -g {input.limits} | '
         'samtools sort > {output.combined_bam}; '
