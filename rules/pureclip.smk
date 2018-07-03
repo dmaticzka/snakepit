@@ -153,7 +153,7 @@ rule pureclip_onlysignal_combine_bam_filter_fmt:
         dir = 'input/{id}/signal',
         limits = lambda wildcards: "{}.limits".format(config["genome"]),
     output:
-        combined_bam = 'output/pureclip_onlysignal/{id}/signal.bam',
+        combined_bam = 'output/pureclip_onlysignal_bam_fmt/{id}/signal.bam',
     conda:
         '../envs/bedtobam.yaml'
     shell:
