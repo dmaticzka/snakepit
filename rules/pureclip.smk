@@ -39,6 +39,7 @@ rule pureclip_impl:
         '-iv "chr1;chr2;chr3;chr4;chr5" '
         '-nt {threads} '
         '-o {output.sites} '
+        '-ld '
         '-or {output.regions} 2>&1 > {log}; '
 
 
