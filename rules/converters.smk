@@ -31,3 +31,24 @@ rule index_bam:
          '../envs/samtools.yaml'
     shell:
         'samtools index {input}'
+
+
+# only keep bam alignments that have their id in an accompanying bed
+rule filter_bam_by_bed:
+    input:
+        bam = 'input/{id}.bam',
+        bed = 'input/{id}.bed',
+    output:
+        bam = 'output/filter_bam_by_bed/{id}.bam',
+    resources:
+        vmem = lambda wildcards, attempt: int(2*(attempt+3))
+    conda:
+        '../envs/samtools.yaml'
+    shell:
+        '( '
+        'samtools view -H {input.bam}; '
+        'samtools view {input.bam} | '
+        'fgrep -w -f <(cut -f 4 {input.bed}) '
+        ') | '
+        'samtools view -b - | '
+        'samtools sort > {output.bam}; '
