@@ -217,7 +217,7 @@ rule pureclip_combine_bam_filter_fmt:
     output:
         combined_bam = 'output/pureclip_bam_fmt/{id}/{sourcedir}.bam',
     params:
-        merged_bam = 'output/pureclip_bam_fmt/{id}/merged.bam',
+        merged_bam = 'output/pureclip_bam_fmt/{id}/{sourcedir}_merged.bam',
     conda:
         '../envs/bedtobam.yaml'
     shell:
