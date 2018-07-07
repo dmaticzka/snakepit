@@ -90,6 +90,7 @@ rule pureclip_onlysignal_impl:
         '-i {input.sig_bam} -bai {input.sig_bai} '
         '-g {params.genome} '
         '-iv "chr1;chr2;chr3;" '
+        '-ld '
         '-nt {threads} '
         '-o {output.sites} '
         '-or {output.regions} 2>&1 > {log}; '
