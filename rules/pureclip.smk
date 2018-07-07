@@ -196,12 +196,28 @@ rule pureclip_onlysignal_combine_bed_to_bam:
 
 rule pureclip_onlysignal_combine_bam_filter_fmt:
     input:
+        dir = 'input/{id}/signal',
+        limits = lambda wildcards: "{}.limits".format(config["genome"]),
+    output:
+        combined_bam = 'output/pureclip_onlysignal_bam_fmt/{id}/signal.bam',
+    params:
+        merged_bam = 'output/pureclip_onlysignal_bam_fmt/{id}/merged.bam',
+    conda:
+        '../envs/bedtobam.yaml'
+    shell:
+        'samtools merge -f -u {params.merged_bam} {input.dir}/*.bam; '
+        'samtools index {params.merged_bam}; '
+        'samtools view -hb -f 66 -o {output.combined_bam} {params.merged_bam}; '
+
+
+rule pureclip_combine_bam_filter_fmt:
+    input:
         dir = 'input/{id}/{sourcedir}',
         limits = lambda wildcards: "{}.limits".format(config["genome"]),
     output:
-        combined_bam = 'output/pureclip_onlysignal_bam_fmt/{id}/{sourcedir}.bam',
+        combined_bam = 'output/pureclip_bam_fmt/{id}/{sourcedir}.bam',
     params:
-        merged_bam = 'output/pureclip_onlysignal_bam_fmt/{id}/merged.bam',
+        merged_bam = 'output/pureclip_bam_fmt/{id}/merged.bam',
     conda:
         '../envs/bedtobam.yaml'
     shell:
