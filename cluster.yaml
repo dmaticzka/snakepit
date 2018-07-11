@@ -28,7 +28,7 @@ pureclip_onlysignal_impl:
     threads: 1
     vmem: '{resources.vmem}G'
 pureclip_bam_fmt_impl:
-    threads: 1
+    threads: 12
     vmem: '{resources.vmem}G'
 pureclip_onlysignal_bam_fmt_impl:
     threads: 1

@@ -131,17 +131,17 @@ rule pureclip_bam_fmt_impl:
         genome = '~/genomes/{}.fa'.format(config['genome']),
     conda:
         '../envs/pureclip.yaml',
-    # use 20, 40, 80, 160 GB of RAM
+    # use 24, 48, 96, ... GB of RAM
     resources:
-        vmem = lambda wildcards, attempt: math.ceil(10*(2**(attempt)))
-    threads: 1
+        vmem = lambda wildcards, attempt: math.ceil((2**(attempt)))
+    threads: 12
     shell:
         'pureclip '
         '-i {input.sig_bam} -bai {input.sig_bai} '
         '-ibam {input.ctl_bam} -ibai {input.ctl_bai} '
         '-g {params.genome} '
-        '-iv "chr1;chr2;chr3;" '
-        '-ld '
+        '-iv "chr15" '
+        '-bw 25 '
         '-nt {threads} -nta {threads} '
         '-o {output.sites} '
         '-or {output.regions} 2>&1 > {log}; '
