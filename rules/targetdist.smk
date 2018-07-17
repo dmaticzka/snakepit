@@ -1,5 +1,5 @@
 def make_targetdist_input():
-    fns = get_input_bed()
+    fns = get_input_bed('input/')
     chdir = list(map(lambda fn: fn.replace('input/','output/targetdist/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'.bed$', '.csv', fn), chdir))
     return(chsuff)
