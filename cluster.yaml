@@ -39,3 +39,7 @@ pureclip_combine_bed_to_bam:
 pureclip_onlysignal_combine_bed_to_bam:
     threads: 1
     vmem: 2G
+
+targetdist_impl:
+    threads: 1
+    vmem: '{resources.vmem}G'

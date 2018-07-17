@@ -20,5 +20,8 @@ rule targetdist_impl:
         outprefix = 'output/targetdist/{id}'
     conda:
         '../envs/targetdist.yaml'
+    # use 20, 40, 80, 160 GB of RAM
+    resources:
+        vmem = lambda wildcards, attempt: math.ceil(10*(2**(attempt)))
     shell:
         '~/co/targetdist/targetdist_{params.genome}.sh {input} {params.outprefix} 2> {log}'
