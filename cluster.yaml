@@ -2,9 +2,15 @@ __default__:
     threads: 1
     vmem: 1G
 
-bed_correlation_heatmap_impl:
+bed_correlation_heatmap_npz:
     threads: 1
     vmem: 70G
+bed_correlation_heatmap_impl:
+    threads: 1
+    vmem: 16G
+bed_correlation_heatmap_nonumbers_impl:
+    threads: 1
+    vmem: 16G
 
 genome_impl:
     threads: 1
