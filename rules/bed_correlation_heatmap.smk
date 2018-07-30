@@ -38,6 +38,7 @@ rule bed_correlation_heatmap_impl:
         npz = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.npz',
     output:
         pdf = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.pdf',
+        csv = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.csv',
     conda:
         '../envs/bed_correlation_heatmap.yaml'
     shell:
