@@ -37,7 +37,7 @@ rule bed_correlation_heatmap_impl:
     input:
         npz = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.npz',
     output:
-        pdf = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap_nonumbers.pdf',
+        pdf = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.pdf',
     conda:
         '../envs/bed_correlation_heatmap.yaml'
     shell:
