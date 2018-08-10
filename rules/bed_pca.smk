@@ -3,10 +3,11 @@ def make_bed_pca_input():
     fns = get_input_dirs()
     chdir = list(map(lambda fn: fn.replace('input/','output/bed_pca/'), fns))
     chsuff = list(map(lambda fn: re.sub(r'$', '_pca.pdf', fn), chdir))
-    return(chsuff)
+    chsuff_transposed = list(map(lambda fn: re.sub(r'$', '_pca_transposed.pdf', fn), chdir))
+    return(chsuff + chsuff_transposed)
 
 
-rule bed_correlation_heatmap:
+rule bed_pca:
     input:
         make_bed_pca_input()
 
@@ -34,18 +35,30 @@ rule bed_pca_npz:
 
 rule bed_pca_impl:
     input:
-        npz = 'output/bed_pca/{dir}_correlation_heatmap.npz',
+        npz = 'output/bed_pca/{dir}.npz',
     output:
-        pdf = 'output/bed_pca/{dir}_correlation_heatmap.pdf',
-        csv = 'output/bed_pca/{dir}_correlation_heatmap.csv',
+        pdf = 'output/bed_pca/{dir}_pca.pdf',
+        csv = 'output/bed_pca/{dir}_pca.csv',
     conda:
         '../envs/bed_pca.yaml'
     shell:
         'plotCorrelation '
         '-in {input.npz} '
         '-o  {output.pdf} '
-        '--outFileCorMatrix {output.csv} '
-        '--corMethod spearman '
-        '--whatToPlot heatmap '
-        '--skipZeros '
-        '--plotNumbers'
+        '--outFileNameData {output.csv} '
+
+
+rule bed_pca_transposed_impl:
+    input:
+        npz = 'output/bed_pca/{dir}.npz',
+    output:
+        pdf = 'output/bed_pca/{dir}_pca_transposed.pdf',
+        csv = 'output/bed_pca/{dir}_pca_transposed.csv',
+    conda:
+        '../envs/bed_pca.yaml'
+    shell:
+        'plotCorrelation '
+        '-in {input.npz} '
+        '-o  {output.pdf} '
+        '--outFileNameData {output.csv} '
+        '--transpose '
