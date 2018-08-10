@@ -42,7 +42,7 @@ rule bed_pca_impl:
     conda:
         '../envs/bed_pca.yaml'
     shell:
-        'plotCorrelation '
+        'plotPCA '
         '-in {input.npz} '
         '-o  {output.pdf} '
         '--outFileNameData {output.csv} '
@@ -57,7 +57,7 @@ rule bed_pca_transposed_impl:
     conda:
         '../envs/bed_pca.yaml'
     shell:
-        'plotCorrelation '
+        'plotPCA '
         '-in {input.npz} '
         '-o  {output.pdf} '
         '--outFileNameData {output.csv} '
