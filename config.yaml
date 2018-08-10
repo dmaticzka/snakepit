@@ -1,2 +1,3 @@
 bed_correlation_heatmap_window_size: 200
+bed_pca_window_size: 200
 genome: hg19

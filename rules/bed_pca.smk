@@ -1,4 +1,4 @@
-def make_bed_correlation_heatmap_input():
+def make_bed_pca_input():
     # this expects all input bed files within a directory under folder input
     fns = get_input_dirs()
     chdir = list(map(lambda fn: fn.replace('input/','output/bed_pca/'), fns))
@@ -8,20 +8,20 @@ def make_bed_correlation_heatmap_input():
 
 rule bed_correlation_heatmap:
     input:
-        make_bed_correlation_heatmap_input()
+        make_bed_pca_input()
 
 
-rule bed_correlation_heatmap_npz:
+rule bed_pca_npz:
     input:
         dir = 'input/{dir}',
         limits = get_genome_limits
     output:
-        npz = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.npz'
+        npz = 'output/bed_pca/{dir}.npz'
     params:
         bed = collect_input_bedngz,
-        window_size = config['bed_correlation_heatmap_window_size']
+        window_size = config['bed_pca_window_size']
     conda:
-        '../envs/bed_correlation_heatmap.yaml'
+        '../envs/bed_pca.yaml'
     shell:
         'LABELS=`basename -s .gz {params.bed} | sed "s:.bed$::g"`;'
         'bedtools makewindows -g {input.limits} -w {params.window_size} | '
@@ -32,14 +32,14 @@ rule bed_correlation_heatmap_npz:
         '--labels $LABELS; '
 
 
-rule bed_correlation_heatmap_impl:
+rule bed_pca_impl:
     input:
-        npz = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.npz',
+        npz = 'output/bed_pca/{dir}_correlation_heatmap.npz',
     output:
-        pdf = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.pdf',
-        csv = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.csv',
+        pdf = 'output/bed_pca/{dir}_correlation_heatmap.pdf',
+        csv = 'output/bed_pca/{dir}_correlation_heatmap.csv',
     conda:
-        '../envs/bed_correlation_heatmap.yaml'
+        '../envs/bed_pca.yaml'
     shell:
         'plotCorrelation '
         '-in {input.npz} '
@@ -49,19 +49,3 @@ rule bed_correlation_heatmap_impl:
         '--whatToPlot heatmap '
         '--skipZeros '
         '--plotNumbers'
-
-
-rule bed_correlation_heatmap_nonumbers_impl:
-    input:
-        npz = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap.npz',
-    output:
-        pdf = 'output/bed_correlation_heatmap/{dir}_correlation_heatmap_nonumbers.pdf',
-    conda:
-        '../envs/bed_correlation_heatmap.yaml'
-    shell:
-        'plotCorrelation '
-        '-in {input.npz} '
-        '-o  {output.pdf} '
-        '--corMethod spearman '
-        '--whatToPlot heatmap '
-        '--skipZeros '
