@@ -1,5 +1,5 @@
 channels:
-  - dmaticzka/label/nightly
+  - dmaticzka
   - bioconda
   - conda-forge
   - defaults
