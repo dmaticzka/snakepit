@@ -11,6 +11,7 @@ include: 'rules/converters.smk'
 include: 'rules/targetdist.smk'
 include: 'rules/peakachu.smk'
 include: 'rules/pureclip.smk'
+include: 'rules/pureclip_second_mate.smk'
 
 rule all:
     message: 'Help Text Here'
