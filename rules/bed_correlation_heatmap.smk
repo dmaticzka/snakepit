@@ -1,4 +1,3 @@
-
 def make_bed_correlation_heatmap_input():
     # this expects all input bed files within a directory under folder input
     fns = get_input_dirs()
@@ -6,6 +5,7 @@ def make_bed_correlation_heatmap_input():
     chsuff = list(map(lambda fn: re.sub(r'$', '_correlation_heatmap.pdf', fn), chdir))
     chsuff_nonumbers = list(map(lambda fn: re.sub(r'$', '_correlation_heatmap_nonumbers.pdf', fn), chdir))
     return(chsuff + chsuff_nonumbers)
+
 
 rule bed_correlation_heatmap:
     input:

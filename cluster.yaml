@@ -4,13 +4,23 @@ __default__:
 
 bed_correlation_heatmap_npz:
     threads: 1
-    vmem: 70G
+    vmem: 130G
 bed_correlation_heatmap_impl:
     threads: 1
-    vmem: 16G
+    vmem: 64G
 bed_correlation_heatmap_nonumbers_impl:
     threads: 1
-    vmem: 16G
+    vmem: 64G
+
+bed_pca_npz:
+    threads: 1
+    vmem: 130G
+bed_pca_impl:
+    threads: 1
+    vmem: 64G
+bed_pca_transposed_impl:
+    threads: 1
+    vmem: 64G
 
 genome_impl:
     threads: 1
@@ -45,6 +55,13 @@ pureclip_combine_bed_to_bam:
 pureclip_onlysignal_combine_bed_to_bam:
     threads: 1
     vmem: 2G
+
+pureclip_bam_2nd_mate_impl:
+    threads: 1
+    vmem: '{resources.vmem}G'
+pureclip_onlysignal_bam_2nd_mate_impl:
+    threads: 1
+    vmem: '{resources.vmem}G'
 
 targetdist_impl:
     threads: 1
